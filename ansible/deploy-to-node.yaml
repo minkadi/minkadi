@@ -127,7 +127,7 @@
         network_mode: "mkdi-{{ stack_name }}"
         ports:
           - "{{ website_port }}:3000"
-        command: bash wait-for-postgres.sh node server.js
+        command: sh wait-for-postgres.sh node server.js
         env:
           POSTGRES_HOST: "mkdi-{{ stack_name }}-postgres-web"
           POSTGRES_PASSWORD: "{{ postgres_password }}"
