@@ -5,7 +5,7 @@ async function npmLint() {
     shell: true,
     env: process.env,
     stdio: "inherit",
-    cwd: "./website",
+    cwd: "./frontend",
   };
   let npmInstall;
   let npmRunLint;

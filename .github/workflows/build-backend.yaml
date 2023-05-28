@@ -43,3 +43,13 @@ jobs:
       context: .
       dockerfile: docker/Dockerfile.backend
       build-args: ""
+
+  build-web:
+    uses: ./.github/workflows/docker-build.yaml
+    secrets: inherit
+    needs: pre-commit
+    with:
+      image-name: mkdi-web
+      context: .
+      dockerfile: docker/Dockerfile.website
+      build-args: ""

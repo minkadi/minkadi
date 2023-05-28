@@ -51,7 +51,7 @@ services:
     profiles: ["frontend-dev", "backend-dev"]
     ports:
       - 8089:8080
-  # The mkdi backend service.
+  #The mkdi backend service.
   backend-test:
     image: mkdi-backend
     build:
@@ -71,7 +71,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    profiles: ["ci"]
     ports:
       - "8080:8080"
 
@@ -117,6 +116,35 @@ services:
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./redis.conf:/usr/local/etc/redis/redis.conf
+  # This DB is for Web Authentication and data caching.
+  webdb:
+    image: postgres:15
+    restart: always
+    profiles: ["frontend-dev", "ci", "inference-dev"]
+    container_name: mdki-web-db
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mkdi_web
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+  web:
+    build:
+      dockerfile: docker/Dockerfile.website
+      context: .
+    image: mkdi-web
+    container_name: mkdi-web
+    depends_on:
+      webdb:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    profiles: ["ci"]
   # The mkdi backend celery worker service.
   backend-worker:
     build:

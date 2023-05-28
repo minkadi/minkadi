@@ -116,3 +116,21 @@
           OFFICIAL_WEB_API_KEY: "{{ web_api_key }}"
         ports:
           - "{{ backend_port }}:8080"
+    - name: Run the minkadi mkdi-web frontend
+      community.docker.docker_container:
+        name: "mkdi-{{ stack_name }}-web"
+        image: "{{ base_registry }}/mkdi-web:{{ image_tag }}"
+        state: started
+        recreate: true
+        pull: true
+        restart_policy: always
+        network_mode: "mkdi-{{ stack_name }}"
+        ports:
+          - "{{ website_port }}:3000"
+        #command: bash wait-for-postgres.sh node server.js
+        env:
+          POSTGRES_HOST: "mkdi-{{ stack_name }}-postgres-web"
+          POSTGRES_PASSWORD: "{{ postgres_password }}"
+          POSTGRES_USER: "{{ postgres_user }}"
+          POSTGRES_DB: "{{ postgres_db }}"
+          REDIS_HOST: "mkdi-{{ stack_name }}-redis"
