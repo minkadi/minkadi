@@ -21,6 +21,6 @@ backend/openapi.json
 .pytest_cache/
 
 /docker-compose.override.yml
-website/.next
-website/node_modules
+frontend/.next
+frontend/node_modules
 .dont_push.env
