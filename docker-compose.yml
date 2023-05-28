@@ -68,6 +68,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - PYTHONPATH=/backend
+    profiles: ["ci"]
     depends_on:
       db:
         condition: service_healthy
@@ -121,7 +122,7 @@ services:
     image: postgres:15
     restart: always
     profiles: ["frontend-dev", "ci", "inference-dev"]
-    container_name: mdki-web-db
+    container_name: mkdi-web-db
     ports:
       - 5433:5432
     environment:
@@ -144,7 +145,11 @@ services:
         condition: service_healthy
     ports:
       - "3000:3000"
+    command: sh wait-for-postgres.sh node server.js
     profiles: ["ci"]
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@mkdi-web-db/mkdi_web
+      - FASTAPI_URL=http://backend:8080
   # The mkdi backend celery worker service.
   backend-worker:
     build:
