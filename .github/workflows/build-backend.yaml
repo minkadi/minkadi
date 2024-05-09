@@ -10,12 +10,14 @@ on:
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit.yaml
+
   test-backend:
     runs-on: self-hosted
     needs: pre-commit
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Start backend env
         run: |
           docker compose --profile ci up --build -d
@@ -38,6 +40,7 @@ jobs:
     needs: test-backend
     uses: ./.github/workflows/docker-build.yaml
     secrets: inherit
+    if: github.ref_name == 'main'
     with:
       image-name: mkdi-backend
       context: .
@@ -48,6 +51,7 @@ jobs:
     uses: ./.github/workflows/docker-build.yaml
     secrets: inherit
     needs: pre-commit
+    if: github.ref_name == 'main'
     with:
       image-name: mkdi-web
       context: .

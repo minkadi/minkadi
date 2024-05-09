@@ -51,6 +51,8 @@ jobs:
             postgres_password=${{secrets.POSTGRES_PASSWORD}} \
             postgres_db=${{secrets.POSTGRES_DB}} \
             web_api_key=${{secrets.WEB_API_KEY}} \
+            auth_salt=${{secrets.AUTH_SALT}} \
+            auth_secret=${{secrets.AUTH_SECRET}} \
             base_registry=${{secrets.DOCKER_USERNAME}} \
             dockerhub_username=${{secrets.DOCKER_USERNAME}} \
             dockerhub_password=${{secrets.DOCKER_TOKEN}}"

@@ -41,30 +41,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Extract ticket number
-        id: extract
-        if: github.ref_name != 'main'
-        run: |
-          echo "PROJECT_INITIAL=$(echo ${{github.ref_name}} |  cut -d'-' -f1 | tr '[:upper:]' '[:lower:]' )" >> $GITHUB_OUTPUT
-          echo "TICKET_NUMBER=$(echo ${{github.ref_name}} | cut -d'-' -f2)" >> $GITHUB_OUTPUT
-          # - name: Set tag prefix
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4.1.1
-        with:
-          images: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image-name }}
-          tags: |
-            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
-            type=sha,prefix=${{ steps.extract.outputs.PROJECT_INITIAL }}-${{ steps.extract.outputs.TICKET_NUMBER }},format=short,enable=${{ github.ref_name != 'main' }}
-            type=ref,event=tag,enable=${{ github.ref_name != 'main' }}
-      - name: Create tag
-        id: tag
-        run: |
-          if [[ "${{github.ref_name }}" == "main" ]]; then
-            echo "TAG=latest" >> $GITHUB_OUTPUT
-          else
-            echo "TAG=${{ steps.extract.outputs.PROJECT_INITIAL }}-${{ steps.extract.outputs.TICKET_NUMBER }}" >> $GITHUB_OUTPUT
-          fi
+
       - name: Build docker images on local runner
         uses: docker/build-push-action@v3.2.0
         with:
@@ -72,7 +49,7 @@ jobs:
           context: ${{ inputs.context }}
           build-args: ${{ inputs.build-args }}
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME}}/${{ inputs.image-name }}:${{ steps.tag.outputs.TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ secrets.DOCKER_USERNAME}}/${{ inputs.image-name }}:latest
+          labels: ${{ secrets.DOCKER_USERNAME}}/${{ inputs.image-name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

@@ -12,6 +12,8 @@
     postgres_user: postgres
     postgres_db: postgres
     web_api_key: "1234"
+    auth_salt: "1234"
+    auth_secret: "1234"
     base_registry: ""
     dockerhub_username: ""
     dockerhub_password: ""
@@ -114,6 +116,8 @@
           RATE_LIMIT: "{{ 'false' if stack_name == 'staging' else 'true' }}"
           DEBUG_SKIP_EMBEDDING_COMPUTATION: "true"
           OFFICIAL_WEB_API_KEY: "{{ web_api_key }}"
+          AUTH_SALT: "{{ auth_salt }}"
+          AUTH_SECRET: "{{ auth_secret }}"
         ports:
           - "{{ backend_port }}:8080"
     - name: Run the minkadi mkdi-web frontend
